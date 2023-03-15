@@ -73,6 +73,8 @@ ItemDefinition& ItemDefinition::operator=(const ItemDefinition &def)
 	liquids_pointable = def.liquids_pointable;
 	if (def.tool_capabilities)
 		tool_capabilities = new ToolCapabilities(*def.tool_capabilities);
+	if (def.wear_bar_params)
+		wear_bar_params = new WearBarParams(*def.wear_bar_params);
 	groups = def.groups;
 	node_placement_prediction = def.node_placement_prediction;
 	place_param2 = def.place_param2;
@@ -95,6 +97,7 @@ void ItemDefinition::resetInitial()
 {
 	// Initialize pointers to NULL so reset() does not delete undefined pointers
 	tool_capabilities = NULL;
+	wear_bar_params = NULL;
 	reset();
 }
 
@@ -116,6 +119,8 @@ void ItemDefinition::reset()
 	liquids_pointable = false;
 	delete tool_capabilities;
 	tool_capabilities = NULL;
+	delete wear_bar_params;
+	wear_bar_params = NULL;
 	groups.clear();
 	sound_place = SimpleSoundSpec();
 	sound_place_failed = SimpleSoundSpec();
@@ -173,6 +178,12 @@ void ItemDefinition::serialize(std::ostream &os, u16 protocol_version) const
 
 	sound_use.serialize(os, protocol_version);
 	sound_use_air.serialize(os, protocol_version);
+	if (wear_bar_params) {
+		writeU8(os, 1);
+		wear_bar_params->serialize(os, protocol_version);
+	} else {
+		writeU8(os, 0);
+	}
 }
 
 void ItemDefinition::deSerialize(std::istream &is, u16 protocol_version)
@@ -230,6 +241,11 @@ void ItemDefinition::deSerialize(std::istream &is, u16 protocol_version)
 
 		sound_use.deSerialize(is, protocol_version);
 		sound_use_air.deSerialize(is, protocol_version);
+
+		if (readU8(is)) {
+			wear_bar_params = new WearBarParams;
+			wear_bar_params->deSerialize(is);
+		}
 	} catch(SerializationError &e) {};
 }
 
