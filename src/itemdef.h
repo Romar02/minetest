@@ -30,6 +30,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 class IGameDef;
 class Client;
 struct ToolCapabilities;
+struct WearBarParams;
 #ifndef SERVER
 #include "client/tile.h"
 struct ItemMesh;
@@ -77,6 +78,8 @@ struct ItemDefinition
 	bool liquids_pointable;
 	// May be NULL. If non-NULL, deleted by destructor
 	ToolCapabilities *tool_capabilities;
+	// May be NULL. If non-NULL, deleted by destructor
+	WearBarParams *wear_bar_params;
 	ItemGroupList groups;
 	SimpleSoundSpec sound_place;
 	SimpleSoundSpec sound_place_failed;
